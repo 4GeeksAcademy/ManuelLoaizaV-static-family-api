@@ -1,36 +1,54 @@
-
-"""
-update this file to implement the following already declared methods:
-- add_member: Should add a member to the self._members list
-- delete_member: Should delete a member from the self._members list
-- update_member: Should update a member from the self._members list
-- get_member: Should return a member from the self._members list
-"""
-from random import randint
-
 class FamilyStructure:
     def __init__(self, last_name):
         self.last_name = last_name
-
-        # example list of members
         self._members = []
+        self._next_id = 1
 
-    # read-only: Use this method to generate random members ID's when adding members into the list
-    def _generateId(self):
-        return randint(0, 99999999)
+    def _generate_id(self):
+        generated_id = self._next_id
+        self._next_id += 1
+        return generated_id
+    
+    def _search(self, member_id):
+        if len(self._members) == 0:
+            return None
+        if self._members[-1]["id"] < member_id:
+            return None
+        if self._members[0]["id"] >= member_id:
+            if self._members[0]["id"] == member_id:
+                return 0
+            return None
+        
+        l = 0
+        r = len(self._members) - 1
+        while r - l > 1:
+            m = (l + r) // 2
+            if self._members[m]["id"] >= member_id:
+                r = m
+            else:
+                l = m
+
+        if self._members[r]["id"] == member_id:
+            return r
+        return None
 
     def add_member(self, member):
-        # fill this method and update the return
-        pass
+        member["id"] = self._generate_id()
+        self._members.append(member)
+        return self._members[-1]
 
     def delete_member(self, id):
-        # fill this method and update the return
-        pass
+        member_index = self._search(id)
+        if member_index is None:
+            return False
+        del self._members[member_index]
+        return True
 
     def get_member(self, id):
-        # fill this method and update the return
-        pass
+        member_index = self._search(id)
+        if member_index is None:
+            return None
+        return self._members[member_index]
 
-    # this method is done, it returns a list with all the family members
     def get_all_members(self):
         return self._members
